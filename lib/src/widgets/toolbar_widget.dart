@@ -32,6 +32,9 @@ class ToolbarWidget extends StatefulWidget {
 
 /// Toolbar widget state
 class ToolbarWidgetState extends State<ToolbarWidget> {
+  // see https://cssunitconverter.vercel.app/px-to-pt
+  static const _pxToPtScalar = 0.74999943307122;
+
   /// List that controls which [ToggleButtons] are selected for
   /// bold/italic/underline/clear styles
   List<bool> _fontSelected = List<bool>.filled(4, false);
@@ -62,13 +65,18 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
   /// Sets the selected item for the font style dropdown
   String _fontSelectedItem = 'p';
 
-  String _fontNameSelectedItem = 'sans-serif';
+  String _fontNameSelectedItem = 'Arial';
 
   /// Sets the selected item for the font size dropdown
-  double _fontSizeSelectedItem = 3;
+  double _fontSizeSelectedItem = 11.0;
 
   /// Keeps track of the current font size in px
-  double _actualFontSizeSelectedItem = 16;
+  double get _actualFontSizeSelectedItem {
+    if (_fontSizeUnitSelectedItem == 'pt') {
+      return (_fontSizeSelectedItem / _pxToPtScalar).roundToDouble();
+    }
+    return _fontSizeSelectedItem;
+  }
 
   /// Sets the selected item for the font units dropdown
   String _fontSizeUnitSelectedItem = 'pt';
@@ -136,7 +144,16 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
     //get font name
     var fontName = (json['fontName'] ?? '').toString().replaceAll('"', '');
     //get font size
-    var fontSize = double.tryParse(json['fontSize']) ?? 3;
+    var fontSize =
+        double.tryParse((json['fontSize'] as String).replaceAll('px', '')) ??
+            14.6667;
+    if (_fontSizeUnitSelectedItem == 'pt') {
+      fontSize = (fontSize * _pxToPtScalar).roundToDouble();
+    }
+    if (!FontSettingButtons.fontSizes.contains(fontSize.toInt())) {
+      fontSize = 11;
+    }
+
     //get bold/underline/italic status
     var fontList = (json['font'] as List<dynamic>).cast<bool?>();
     //get superscript/subscript/strikethrough status
@@ -164,16 +181,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         _fontSelectedItem = 'p';
       });
     }
-    //check the font name if it matches one of the predetermined fonts and update the toolbar
-    if (['Courier New', 'sans-serif', 'Times New Roman'].contains(fontName)) {
-      setState(mounted, this.setState, () {
-        _fontNameSelectedItem = fontName;
-      });
-    } else {
-      setState(mounted, this.setState, () {
-        _fontNameSelectedItem = 'sans-serif';
-      });
-    }
+    setState(mounted, this.setState, () {
+      _fontNameSelectedItem = fontName;
+    });
     //update the fore/back selected color if necessary
     if (colorList[0] != null && colorList[0]!.isNotEmpty) {
       setState(mounted, this.setState, () {
@@ -232,12 +242,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         _lineHeightSelectedItem = 1.0;
       });
     }
-    //check if the font size matches one of the predetermined sizes and update the toolbar
-    if ([1, 2, 3, 4, 5, 6, 7].contains(fontSize)) {
-      setState(mounted, this.setState, () {
-        _fontSizeSelectedItem = fontSize;
-      });
-    }
+    setState(mounted, this.setState, () {
+      _fontSizeSelectedItem = fontSize;
+    });
     if (textDir == 'ltr') {
       setState(mounted, this.setState, () {
         _textDirectionSelected = [true, false];
@@ -605,7 +612,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         ));
       }
       if (t is FontSettingButtons) {
-        if (t.fontName) {
+        if (t.fontFamilies.length > 1) {
           toolbarChildren.add(Container(
             padding: const EdgeInsets.only(left: 8.0),
             height: widget.htmlToolbarOptions.toolbarItemHeight,
@@ -639,26 +646,20 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                     widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
                         MediaQuery.of(context).size.height / 3,
                 style: widget.htmlToolbarOptions.textStyle,
-                items: [
-                  CustomDropdownMenuItem(
-                    value: 'Courier New',
-                    child: PointerInterceptor(
-                        child: Text('Courier New',
-                            style: TextStyle(fontFamily: 'Courier'))),
-                  ),
-                  CustomDropdownMenuItem(
-                    value: 'sans-serif',
-                    child: PointerInterceptor(
-                        child: Text('Sans Serif',
-                            style: TextStyle(fontFamily: 'sans-serif'))),
-                  ),
-                  CustomDropdownMenuItem(
-                    value: 'Times New Roman',
-                    child: PointerInterceptor(
-                        child: Text('Times New Roman',
-                            style: TextStyle(fontFamily: 'Times'))),
-                  ),
-                ],
+                items: t.fontFamilies
+                    .map(
+                      (fontFamily) => CustomDropdownMenuItem(
+                        value: fontFamily.fontFamily,
+                        child: PointerInterceptor(
+                          child: Text(
+                            fontFamily.label ?? fontFamily.fontFamily,
+                            style: fontFamily.textStyle ??
+                                TextStyle(fontFamily: fontFamily.fontFamily),
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
                 value: _fontNameSelectedItem,
                 onChanged: (String? changed) async {
                   void updateSelectedItem(dynamic changed) async {
@@ -721,50 +722,24 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                     widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
                         MediaQuery.of(context).size.height / 3,
                 style: widget.htmlToolbarOptions.textStyle,
-                items: [
-                  CustomDropdownMenuItem(
-                    value: 1,
-                    child: PointerInterceptor(
+                items: FontSettingButtons.fontSizes.map(
+                  (fontSize) {
+                    final isPx = _fontSizeUnitSelectedItem == "px";
+                    final divisor = isPx ? _pxToPtScalar : 1;
+
+                    final adjustedFontSize =
+                        (fontSize / divisor).roundToDouble();
+
+                    return CustomDropdownMenuItem(
+                      value: adjustedFontSize,
+                      child: PointerInterceptor(
                         child: Text(
-                            "${_fontSizeUnitSelectedItem == "px" ? "11" : "8"} $_fontSizeUnitSelectedItem")),
-                  ),
-                  CustomDropdownMenuItem(
-                    value: 2,
-                    child: PointerInterceptor(
-                        child: Text(
-                            "${_fontSizeUnitSelectedItem == "px" ? "13" : "10"} $_fontSizeUnitSelectedItem")),
-                  ),
-                  CustomDropdownMenuItem(
-                    value: 3,
-                    child: PointerInterceptor(
-                        child: Text(
-                            "${_fontSizeUnitSelectedItem == "px" ? "16" : "12"} $_fontSizeUnitSelectedItem")),
-                  ),
-                  CustomDropdownMenuItem(
-                    value: 4,
-                    child: PointerInterceptor(
-                        child: Text(
-                            "${_fontSizeUnitSelectedItem == "px" ? "19" : "14"} $_fontSizeUnitSelectedItem")),
-                  ),
-                  CustomDropdownMenuItem(
-                    value: 5,
-                    child: PointerInterceptor(
-                        child: Text(
-                            "${_fontSizeUnitSelectedItem == "px" ? "24" : "18"} $_fontSizeUnitSelectedItem")),
-                  ),
-                  CustomDropdownMenuItem(
-                    value: 6,
-                    child: PointerInterceptor(
-                        child: Text(
-                            "${_fontSizeUnitSelectedItem == "px" ? "32" : "24"} $_fontSizeUnitSelectedItem")),
-                  ),
-                  CustomDropdownMenuItem(
-                    value: 7,
-                    child: PointerInterceptor(
-                        child: Text(
-                            "${_fontSizeUnitSelectedItem == "px" ? "48" : "36"} $_fontSizeUnitSelectedItem")),
-                  ),
-                ],
+                          "${adjustedFontSize.toInt()} $_fontSizeUnitSelectedItem",
+                        ),
+                      ),
+                    );
+                  },
+                ).toList(),
                 value: _fontSizeSelectedItem,
                 onChanged: (double? changed) async {
                   void updateSelectedItem(dynamic changed) {
@@ -776,7 +751,6 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                   }
 
                   if (changed != null) {
-                    var intChanged = changed.toInt();
                     var proceed =
                         await widget.htmlToolbarOptions.onDropdownChanged?.call(
                                 DropdownType.fontSize,
@@ -784,31 +758,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                 updateSelectedItem) ??
                             true;
                     if (proceed) {
-                      switch (intChanged) {
-                        case 1:
-                          _actualFontSizeSelectedItem = 11;
-                          break;
-                        case 2:
-                          _actualFontSizeSelectedItem = 13;
-                          break;
-                        case 3:
-                          _actualFontSizeSelectedItem = 16;
-                          break;
-                        case 4:
-                          _actualFontSizeSelectedItem = 19;
-                          break;
-                        case 5:
-                          _actualFontSizeSelectedItem = 24;
-                          break;
-                        case 6:
-                          _actualFontSizeSelectedItem = 32;
-                          break;
-                        case 7:
-                          _actualFontSizeSelectedItem = 48;
-                          break;
-                      }
-                      widget.controller.execCommand('fontSize',
-                          argument: changed.toString());
+                      widget.controller.changeFontSize("${changed.toInt()}");
                       updateSelectedItem(changed);
                     }
                   }
@@ -879,6 +829,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                 updateSelectedItem) ??
                             true;
                     if (proceed) {
+                      widget.controller.changeFontSizeUnit(changed);
                       updateSelectedItem(changed);
                     }
                   }

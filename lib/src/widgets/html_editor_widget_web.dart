@@ -1,14 +1,14 @@
-export 'dart:html';
-
 import 'dart:convert';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
-import 'package:html_editor_enhanced/utils/utils.dart';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
 import 'package:html_editor_enhanced/utils/shims/dart_ui.dart' as ui;
+import 'package:html_editor_enhanced/utils/utils.dart';
+
+export 'dart:html';
 
 /// The HTML Editor widget itself, for web (uses IFrameElement)
 class HtmlEditorWidget extends StatefulWidget {
@@ -314,6 +314,15 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
                   document.execCommand(data["command"], false, data["argument"]);
                 }
               }
+              if (data["type"].includes("changeFontName")) {
+                \$('#summernote-2').summernote('fontName', data["changed"]);
+              }
+              if (data["type"].includes("changeFontSize")) {
+                \$('#summernote-2').summernote('fontSize', data["changed"]);
+              }
+              if (data["type"].includes("changeFontSizeUnit")) {
+                \$('#summernote-2').summernote('fontSizeUnit', data["changed"]);
+              }
               if (data["type"].includes("changeListStyle")) {
                 var \$focusNode = \$(window.getSelection().focusNode);
                 var \$parentList = \$focusNode.closest("div.note-editable ol, div.note-editable ul");
@@ -395,7 +404,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
           var isFull = false;
           var parent;
           var fontName;
-          var fontSize = 16;
+          var fontSize = '14.6667px';
           var foreColor = "000000";
           var backColor = "FFFF00";
           var focusNode2 = \$(window.getSelection().focusNode);
@@ -419,11 +428,12 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
           }
           if (document.queryCommandValue) {
             parent = document.queryCommandValue('formatBlock');
-            fontSize = document.queryCommandValue('fontSize');
             foreColor = document.queryCommandValue('foreColor');
             backColor = document.queryCommandValue('hiliteColor');
-            fontName = document.queryCommandValue('fontName');
           }
+          fontSize = window.getComputedStyle(anchorNode.parentElement, null).getPropertyValue('font-size');
+          fontName = window.getComputedStyle(anchorNode.parentElement, null).getPropertyValue('font-family');
+
           var message = {
             'view': "$createdViewId", 
             'type': "toDart: updateToolbar",

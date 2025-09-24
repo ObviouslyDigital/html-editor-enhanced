@@ -269,6 +269,18 @@ class HtmlEditorController extends unsupported.HtmlEditorController {
     }
   }
 
+  /// Internal function to change font size on Web
+  @override
+  void changeFontSize(String changed) {}
+
+  /// Internal function to change font size on Web
+  @override
+  void changeFontSizeUnit(String changed) {}
+
+  /// Internal function to change font family on Web
+  @override
+  void changeFontFamily(String changed) {}
+
   /// Internal function to change list style on Web
   @override
   void changeListStyle(String changed) {}

@@ -152,6 +152,18 @@ class HtmlEditorController {
   /// Undoes the last action
   void undo() {}
 
+  /// Internal function to change font size on Web
+  @internal
+  void changeFontSize(String changed) {}
+
+  /// Internal function to change font size on Web
+  @internal
+  void changeFontSizeUnit(String changed) {}
+
+  /// Internal function to change font family on Web
+  @internal
+  void changeFontFamily(String changed) {}
+
   /// Internal function to change list style on Web
   @internal
   void changeListStyle(String changed) {}

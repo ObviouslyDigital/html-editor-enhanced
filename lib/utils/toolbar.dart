@@ -14,17 +14,61 @@ class StyleButtons extends Toolbar {
   });
 }
 
+class FontFamily {
+  final String fontFamily;
+  final String? label;
+  final TextStyle? textStyle;
+
+  const FontFamily({required this.fontFamily, this.label, this.textStyle});
+}
+
 /// Font setting group
 class FontSettingButtons extends Toolbar {
-  final bool fontName;
   final bool fontSize;
+  final bool fontName;
   final bool fontSizeUnit;
 
+  final List<FontFamily> fontFamilies;
+
   const FontSettingButtons({
-    this.fontName = true,
     this.fontSize = true,
     this.fontSizeUnit = true,
+    this.fontName = true,
+    this.fontFamilies = defaultFontFamilies,
   });
+
+  static const List<FontFamily> defaultFontFamilies = const [
+    FontFamily(
+      fontFamily: 'Arial',
+    ),
+    FontFamily(
+      fontFamily: 'Courier New',
+      textStyle: TextStyle(fontFamily: 'Courier'),
+    ),
+    FontFamily(fontFamily: 'sans-serif', label: 'Sans Serif'),
+    FontFamily(
+      fontFamily: 'Times New Roman',
+      textStyle: TextStyle(fontFamily: 'Times'),
+    ),
+  ];
+  static const List<int> fontSizes = const [
+    8,
+    9,
+    10,
+    11,
+    12,
+    14,
+    16,
+    18,
+    20,
+    22,
+    24,
+    26,
+    28,
+    36,
+    48,
+    72
+  ];
 }
 
 /// Font group

@@ -239,6 +239,33 @@ class HtmlEditorController extends unsupported.HtmlEditorController {
     }
   }
 
+  /// Internal function to change font size on Web
+  @override
+  void changeFontSize(String changed) {
+    _evaluateJavascriptWeb(data: {
+      'type': 'toIframe: changeFontSize',
+      'changed': changed,
+    });
+  }
+
+  /// Internal function to change font size on Web
+  @override
+  void changeFontSizeUnit(String changed) {
+    _evaluateJavascriptWeb(data: {
+      'type': 'toIframe: changeFontSizeUnit',
+      'changed': changed,
+    });
+  }
+
+  /// Internal function to change font family on Web
+  @override
+  void changeFontFamily(String changed) {
+    _evaluateJavascriptWeb(data: {
+      'type': 'toIframe: changeFontName',
+      'changed': changed,
+    });
+  }
+
   /// Internal function to change list style on Web
   @override
   void changeListStyle(String changed) {

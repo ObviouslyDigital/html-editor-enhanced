@@ -7,6 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:html_editor_enhanced/utils/shims/dart_ui.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 /// small function to always check if mounted before running setState()
 void setState(
@@ -254,11 +255,6 @@ class _DropdownMenuItemButtonState<T>
         widget.constraints.maxHeight,
         widget.itemIndex,
       );
-      widget.route.scrollController!.animateTo(
-        menuLimits.scrollOffset,
-        curve: Curves.easeInOut,
-        duration: const Duration(milliseconds: 100),
-      );
     }
   }
 
@@ -395,16 +391,10 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                 physics: const ClampingScrollPhysics(),
                 platform: Theme.of(context).platform,
               ),
-              child: PrimaryScrollController(
-                controller: widget.route.scrollController!,
-                child: Scrollbar(
-                  thumbVisibility: true,
-                  child: ListView(
-                    padding: kMaterialListPadding,
-                    shrinkWrap: true,
-                    children: children,
-                  ),
-                ),
+              child: ListView(
+                padding: kMaterialListPadding,
+                shrinkWrap: true,
+                children: children,
               ),
             ),
           ),
@@ -527,7 +517,6 @@ class _DropdownRoute<T> extends PopupRoute<_DropdownRouteResult<T>> {
   final DropdownMenuDirection menuDirection;
 
   final List<double> itemHeights;
-  ScrollController? scrollController;
 
   @override
   Duration get transitionDuration => _kDropdownMenuDuration;
@@ -546,17 +535,22 @@ class _DropdownRoute<T> extends PopupRoute<_DropdownRouteResult<T>> {
       Animation<double> secondaryAnimation) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        return _DropdownRoutePage<T>(
-          route: this,
-          constraints: constraints,
-          items: items,
-          padding: padding,
-          buttonRect: buttonRect,
-          selectedIndex: selectedIndex,
-          elevation: elevation,
-          capturedThemes: capturedThemes,
-          style: style,
-          dropdownColor: dropdownColor,
+        return PointerInterceptor(
+          child: TapRegion(
+            onTapOutside: (_) => _dismiss(),
+            child: _DropdownRoutePage<T>(
+              route: this,
+              constraints: constraints,
+              items: items,
+              padding: padding,
+              buttonRect: buttonRect,
+              selectedIndex: selectedIndex,
+              elevation: elevation,
+              capturedThemes: capturedThemes,
+              style: style,
+              dropdownColor: dropdownColor,
+            ),
+          ),
         );
       },
     );
@@ -651,12 +645,6 @@ class _DropdownRoutePage<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasDirectionality(context));
-    if (route.scrollController == null) {
-      final menuLimits =
-          route.getMenuLimits(buttonRect, constraints.maxHeight, selectedIndex);
-      route.scrollController =
-          ScrollController(initialScrollOffset: menuLimits.scrollOffset);
-    }
 
     final textDirection = Directionality.maybeOf(context);
     final Widget menu = _DropdownMenu<T>(
@@ -795,20 +783,7 @@ class CustomDropdownButton<T> extends StatefulWidget {
     this.dropdownColor,
     this.menuMaxHeight,
     required this.menuDirection,
-  })  : assert(
-          items == null ||
-              items.isEmpty ||
-              value == null ||
-              items.where((CustomDropdownMenuItem<T> item) {
-                    return item.value == value;
-                  }).length ==
-                  1,
-          "There should be exactly one item with [DropdownButton]'s value: "
-          '$value. \n'
-          'Either zero or 2 or more [DropdownMenuItem]s were detected '
-          'with the same value',
-        ),
-        assert(itemHeight == null || itemHeight >= kMinInteractiveDimension),
+  })  : assert(itemHeight == null || itemHeight >= kMinInteractiveDimension),
         super(key: key);
 
   final DropdownMenuDirection menuDirection;
@@ -935,11 +910,6 @@ class _DropdownButtonState<T> extends State<CustomDropdownButton<T>>
       return;
     }
 
-    assert(widget.items!
-            .where(
-                (CustomDropdownMenuItem<T> item) => item.value == widget.value)
-            .length ==
-        1);
     for (var itemIndex = 0; itemIndex < widget.items!.length; itemIndex++) {
       if (widget.items![itemIndex].value == widget.value) {
         _selectedIndex = itemIndex;
