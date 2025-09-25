@@ -434,19 +434,19 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
             foreColor = document.queryCommandValue('foreColor');
             backColor = document.queryCommandValue('hiliteColor');
           }
-          const selection = window.getSelection();
-          if (selection.rangeCount > 0) {
-              const range = selection.getRangeAt(0);
-              const container = range.commonAncestorContainer;
-              
-              let element = container.nodeType === Node.TEXT_NODE 
-                  ? container.parentElement 
-                  : container;
-                  
-              const computedStyle = window.getComputedStyle(element);
-              fontSize = computedStyle.getPropertyValue('font-size');
-              fontName = computedStyle.getPropertyValue('font-family');
+          var targetElement;
+          if (anchorNode.nodeType === Node.TEXT_NODE) {
+              targetElement = anchorNode.parentElement;
+          } else if (anchorNode.nodeType === Node.ELEMENT_NODE) {
+              targetElement = anchorNode;
+          } else {
+              // Handle other node types
+              targetElement = anchorNode.parentElement || document.documentElement;
           }
+          
+          const computedStyle = window.getComputedStyle(targetElement);
+          fontSize = computedStyle.getPropertyValue('font-size');
+          fontName = computedStyle.getPropertyValue('font-family');
 
           var message = {
             'view': "$createdViewId", 

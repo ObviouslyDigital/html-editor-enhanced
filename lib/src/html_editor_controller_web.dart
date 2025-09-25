@@ -241,7 +241,8 @@ class HtmlEditorController extends unsupported.HtmlEditorController {
 
   /// Internal function to change font size on Web
   @override
-  void changeFontSize(String changed) {
+  void changeFontSize(String changed, String fontSizeUnit) {
+    changeFontSizeUnit(fontSizeUnit);
     _evaluateJavascriptWeb(data: {
       'type': 'toIframe: changeFontSize',
       'changed': changed,

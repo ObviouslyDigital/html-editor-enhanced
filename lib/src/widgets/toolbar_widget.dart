@@ -758,7 +758,10 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                 updateSelectedItem) ??
                             true;
                     if (proceed) {
-                      widget.controller.changeFontSize("${changed.toInt()}");
+                      widget.controller.changeFontSize(
+                        "${changed.toInt()}",
+                        _fontSizeUnitSelectedItem,
+                      );
                       updateSelectedItem(changed);
                     }
                   }

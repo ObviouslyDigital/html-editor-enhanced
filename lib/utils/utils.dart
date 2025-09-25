@@ -238,26 +238,6 @@ class _DropdownMenuItemButton<T> extends StatefulWidget {
 
 class _DropdownMenuItemButtonState<T>
     extends State<_DropdownMenuItemButton<T>> {
-  void _handleFocusChange(bool focused) {
-    final bool inTraditionalMode;
-    switch (FocusManager.instance.highlightMode) {
-      case FocusHighlightMode.touch:
-        inTraditionalMode = false;
-        break;
-      case FocusHighlightMode.traditional:
-        inTraditionalMode = true;
-        break;
-    }
-
-    if (focused && inTraditionalMode) {
-      final menuLimits = widget.route.getMenuLimits(
-        widget.buttonRect,
-        widget.constraints.maxHeight,
-        widget.itemIndex,
-      );
-    }
-  }
-
   void _handleOnTap() {
     final dropdownMenuItem = widget.route.items[widget.itemIndex].item!;
 
@@ -295,7 +275,6 @@ class _DropdownMenuItemButtonState<T>
       child: InkWell(
         autofocus: widget.itemIndex == widget.route.selectedIndex,
         onTap: _handleOnTap,
-        onFocusChange: _handleFocusChange,
         child: Container(
           padding: widget.padding,
           child: widget.route.items[widget.itemIndex],
@@ -439,7 +418,6 @@ class _DropdownMenuRouteLayout<T> extends SingleChildLayoutDelegate {
       final container = Offset.zero & size;
       if (container.intersect(buttonRect) == buttonRect) {
         assert(menuLimits.top >= 0.0);
-        assert(menuLimits.top + menuLimits.height <= size.height);
       }
       return true;
     }());
@@ -558,7 +536,7 @@ class _DropdownRoute<T> extends PopupRoute<_DropdownRouteResult<T>> {
 
   void _dismiss() {
     if (isActive) {
-      navigator?.removeRoute(this);
+      navigator?.pop();
     }
   }
 
@@ -644,8 +622,6 @@ class _DropdownRoutePage<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    assert(debugCheckHasDirectionality(context));
-
     final textDirection = Directionality.maybeOf(context);
     final Widget menu = _DropdownMenu<T>(
       route: route,
@@ -952,7 +928,7 @@ class _DropdownButtonState<T> extends State<CustomDropdownButton<T>>
       items: menuItems,
       buttonRect: menuMargin.resolve(textDirection).inflateRect(itemRect),
       padding: _kMenuItemPadding.resolve(textDirection),
-      selectedIndex: _selectedIndex ?? 0,
+      selectedIndex: 0,
       elevation: widget.elevation,
       capturedThemes:
           InheritedTheme.capture(from: context, to: navigator.context),

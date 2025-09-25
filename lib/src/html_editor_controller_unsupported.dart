@@ -153,8 +153,10 @@ class HtmlEditorController {
   void undo() {}
 
   /// Internal function to change font size on Web
+  /// 
+  /// Always pass in the unit so we can ensure the correct unit is used
   @internal
-  void changeFontSize(String changed) {}
+  void changeFontSize(String changed, String fontSizeUnit) {}
 
   /// Internal function to change font size on Web
   @internal
