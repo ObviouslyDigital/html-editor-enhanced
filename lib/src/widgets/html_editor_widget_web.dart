@@ -218,6 +218,9 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
             $summernoteCallbacks
           });
           
+          \$('#summernote-2').summernote('fontSizeUnit', 'pt');
+          \$('#summernote-2').summernote('fontSize', 11);
+          
           \$('#summernote-2').on('summernote.change', function(_, contents, \$editable) {
             window.parent.postMessage(JSON.stringify({"view": "$createdViewId", "type": "toDart: onChangeContent", "contents": contents}), "*");
           });
@@ -431,8 +434,19 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
             foreColor = document.queryCommandValue('foreColor');
             backColor = document.queryCommandValue('hiliteColor');
           }
-          fontSize = window.getComputedStyle(anchorNode.parentElement, null).getPropertyValue('font-size');
-          fontName = window.getComputedStyle(anchorNode.parentElement, null).getPropertyValue('font-family');
+          const selection = window.getSelection();
+          if (selection.rangeCount > 0) {
+              const range = selection.getRangeAt(0);
+              const container = range.commonAncestorContainer;
+              
+              let element = container.nodeType === Node.TEXT_NODE 
+                  ? container.parentElement 
+                  : container;
+                  
+              const computedStyle = window.getComputedStyle(element);
+              fontSize = computedStyle.getPropertyValue('font-size');
+              fontName = computedStyle.getPropertyValue('font-family');
+          }
 
           var message = {
             'view': "$createdViewId", 
