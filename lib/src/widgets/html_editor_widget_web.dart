@@ -228,6 +228,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
             $summernoteCallbacks
           });
           
+          \$('#summernote-2').summernote('fontName', 'Arial');
           \$('#summernote-2').summernote('fontSizeUnit', 'pt');
           \$('#summernote-2').summernote('fontSize', 11);
           
