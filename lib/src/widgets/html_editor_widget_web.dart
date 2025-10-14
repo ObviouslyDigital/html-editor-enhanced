@@ -219,7 +219,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
               ['insert', ['link', 'picture']],
             ],
             fontSizeUnits: ['pt'],
-            fontNames: ['Arial', 'Arial Black', 'Times New Roman', 'Courier New', 'Helvetica']
+            fontNames: ['Arial', 'Arial Black', 'Times New Roman', 'Courier New', 'Helvetica'],
             placeholder: "${widget.htmlEditorOptions.hint}",
             tabsize: 2,
             height: ${widget.otherOptions.height},
