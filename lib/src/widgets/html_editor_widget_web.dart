@@ -219,6 +219,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
               ['insert', ['link', 'picture']],
             ],
             fontSizeUnits: ['pt'],
+            fontNames: ['Arial', 'Arial Black', 'Times New Roman', 'Courier New', 'Helvetica']
             placeholder: "${widget.htmlEditorOptions.hint}",
             tabsize: 2,
             height: ${widget.otherOptions.height},
@@ -259,6 +260,9 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
               }
               if (data["type"].includes("setText")) {
                 \$('#summernote-2').summernote('code', data["text"]);
+                \$('#summernote-2').summernote('fontName', 'Arial');
+                \$('#summernote-2').summernote('fontSizeUnit', 'pt');
+                \$('#summernote-2').summernote('fontSize', 11);
               }
               if (data["type"].includes("setFullScreen")) {
                 \$("#summernote-2").summernote("fullscreen.toggle");
