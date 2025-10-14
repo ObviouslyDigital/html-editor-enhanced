@@ -208,6 +208,17 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
       <script type="text/javascript">
         \$(document).ready(function () {
           \$('#summernote-2').summernote({
+            toolbar: [
+              ['style', ['style']],
+              ['font', ['bold', 'underline', 'strikethrough', 'clear']],
+              ['fontname', ['fontname']],
+              ['fontsize', ['fontsize']],
+              ['color', ['color']],
+              ['para', ['ul', 'ol', 'paragraph']],
+              ['table', ['table']],
+              ['insert', ['link', 'picture']],
+              ['view', ['fullscreen', 'codeview', 'help']],
+            ],
             placeholder: "${widget.htmlEditorOptions.hint}",
             tabsize: 2,
             height: ${widget.otherOptions.height},
