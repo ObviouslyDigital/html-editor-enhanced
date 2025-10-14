@@ -217,7 +217,6 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
               ['para', ['ul', 'ol', 'paragraph']],
               ['table', ['table']],
               ['insert', ['link', 'picture']],
-              ['view', ['fullscreen', 'codeview', 'help']],
             ],
             placeholder: "${widget.htmlEditorOptions.hint}",
             tabsize: 2,
