@@ -218,6 +218,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
               ['table', ['table']],
               ['insert', ['link', 'picture']],
             ],
+            fontSizeUnits: ['pt'],
             placeholder: "${widget.htmlEditorOptions.hint}",
             tabsize: 2,
             height: ${widget.otherOptions.height},
@@ -267,6 +268,9 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
               }
               if (data["type"].includes("clear")) {
                 \$('#summernote-2').summernote('reset');
+                \$('#summernote-2').summernote('fontName', 'Arial');
+                \$('#summernote-2').summernote('fontSizeUnit', 'pt');
+                \$('#summernote-2').summernote('fontSize', 11);
               }
               if (data["type"].includes("setHint")) {
                 \$(".note-placeholder").html(data["text"]);
