@@ -229,6 +229,10 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
             ${widget.htmlEditorOptions.customOptions}
             $summernoteCallbacks
           });
+
+          \$('#summernote-2').summernote('fontName', 'Arial');
+          \$('#summernote-2').summernote('fontSizeUnit', 'pt');
+          \$('#summernote-2').summernote('fontSize', 11);
           
           \$('#summernote-2').on('summernote.change', function(_, contents, \$editable) {
             window.parent.postMessage(JSON.stringify({"view": "$createdViewId", "type": "toDart: onChangeContent", "contents": contents}), "*");
