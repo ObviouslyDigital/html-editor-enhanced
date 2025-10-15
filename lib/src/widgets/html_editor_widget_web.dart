@@ -209,18 +209,18 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
         \$(document).ready(function () {
           \$('#summernote-2').summernote({
             toolbar: [
-              ['style', ['style']],
               ['font', ['bold', 'underline', 'strikethrough', 'clear']],
               ['fontname', ['fontname']],
               ['fontsize', ['fontsize']],
+              ['fontsizeunit', ['fontsizeunit']],
               ['color', ['color']],
               ['para', ['ul', 'ol', 'paragraph']],
               ['table', ['table']],
               ['insert', ['link', 'picture']],
             ],
-            fontSizeUnits: ['pt'],
+            fontSizeUnits: ['px, pt'],
             fontNames: ['Arial', 'Arial Black', 'Times New Roman', 'Courier New', 'Helvetica'],
-            placeholder: "${widget.htmlEditorOptions.hint}",
+            placeholder: "${widget.htmlEditorOptions.hint ?? 'Start writing...'}",
             tabsize: 2,
             height: ${widget.otherOptions.height},
             disableGrammar: false,
@@ -229,10 +229,6 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
             ${widget.htmlEditorOptions.customOptions}
             $summernoteCallbacks
           });
-          
-          \$('#summernote-2').summernote('fontName', 'Arial');
-          \$('#summernote-2').summernote('fontSizeUnit', 'pt');
-          \$('#summernote-2').summernote('fontSize', 11);
           
           \$('#summernote-2').on('summernote.change', function(_, contents, \$editable) {
             window.parent.postMessage(JSON.stringify({"view": "$createdViewId", "type": "toDart: onChangeContent", "contents": contents}), "*");
