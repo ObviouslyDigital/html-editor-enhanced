@@ -1481,12 +1481,7 @@ a.note-dropdown-item:hover {
     color: gray;
     display: none;
     position: absolute;
-    top: 10px;
-    /* Match the padding of .note-editable */
-    left: 10px;
-    /* Match the padding of .note-editable */
     pointer-events: none;
-    /* Prevent interference with clicking */
 }
 
 .note-handle .note-control-selection {

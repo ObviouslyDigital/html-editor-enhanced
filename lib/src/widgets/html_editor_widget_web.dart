@@ -218,7 +218,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
               ['table', ['table']],
               ['insert', ['link', 'picture']],
             ],
-            fontSizeUnits: ['px, pt'],
+            fontSizeUnits: ['px', 'pt'],
             fontNames: ['Arial', 'Arial Black', 'Times New Roman', 'Courier New', 'Helvetica'],
             placeholder: "${widget.htmlEditorOptions.hint ?? 'Start writing...'}",
             tabsize: 2,
